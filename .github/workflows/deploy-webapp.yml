@@ -1,0 +1,38 @@
+name: Deploy Web App to Vercel
+
+on:
+  push:
+    branches:
+      - main # Triggers on pushes to the main branch
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy_webapp:
+    runs-on: ubuntu-latest
+    # This job will only run if changes are detected in the web-app directory
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && contains(join(github.event.commits.*.files, ' '), 'frontend/web-app/'))
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm --prefix frontend/web-app ci
+
+      - name: Run Linting
+        run: npm --prefix frontend/web-app run lint
+
+      # Placeholder for tests - we will enable this when tests are written
+      # - name: Run Tests
+      #   run: npm --prefix frontend/web-app run test
+
+      - name: Deploy to Vercel
+        # We will add the Vercel CLI step here once secrets are configured
+        run: echo "Deployment step will be configured next."
